@@ -3,24 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beta Apps - Early Access</title>
+    <title>Raj's Beta Apps - Early Access</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #333; margin-bottom: 20px; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        button:hover { background: #0056b3; }
+        /* CSS Variables for Light/Dark Mode */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --input-bg: #ffffff;
+            --border-color: #dddddd;
+            --slider-bg: #f8f9fa;
+        }
+
+        body.dark-mode {
+            --bg-gradient: linear-gradient(135deg, #121212 0%, #2c3e50 100%);
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #bbbbbb;
+            --input-bg: #2a2a2a;
+            --border-color: #444444;
+            --slider-bg: #252525;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-gradient); 
+            min-height: 100vh;
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-main);
+            transition: 0.4s;
+        }
+
+        /* Top Bar (Lang & Theme) */
+        .top-bar {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+        .top-bar select, .top-bar button {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            background: var(--card-bg);
+            color: var(--text-main);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: 0.3s;
+        }
+        .top-bar select:hover, .top-bar button:hover {
+            transform: scale(1.05);
+        }
+
+        .container { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            width: 100%; 
+            max-width: 420px; 
+            text-align: center; 
+            position: relative;
+            transition: 0.4s;
+        }
+        
+        /* Instructions Block */
+        .instruction-box {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-main);
+            background: rgba(0, 123, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: justify;
+            border-left: 4px solid #007bff;
+        }
+
+        /* Slider Styles */
+        .slider-btn {
+            background: transparent;
+            color: #007bff;
+            border: 2px solid #007bff;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .slider-btn:hover { background: #007bff; color: white; }
+        
+        .profile-slider { 
+            display: none; 
+            margin: 0 -30px 20px -30px; 
+            background: var(--slider-bg);
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .cover-pic { 
+            width: 100%; 
+            height: 140px; 
+            background-image: url('https://raw.githubusercontent.com/RajBaria/my-downloads/main/1788200164.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+        }
+        .profile-pic { 
+            width: 100px; 
+            height: 100px; 
+            border-radius: 50%; 
+            border: 4px solid var(--card-bg); 
+            margin-top: -50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            object-fit: cover; 
+            background: #fff;
+        }
+        
+        /* Social Icons */
+        .social-icons { display: flex; justify-content: center; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
+        .social-icon { 
+            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; font-size: 18px; transition: 0.3s; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        .social-icon:hover { transform: translateY(-4px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); color: white;}
+        .fb { background: #1877F2; }
+        .ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        .x-twitter { background: #000000; }
+        .wa { background: #25D366; }
+        .mail { background: #EA4335; }
+        .web { background: #6f42c1; }
+
+        /* General Styles */
+        h2, h3 { color: var(--text-main); margin-bottom: 20px; }
+        p { color: var(--text-muted); }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; outline: none; transition: 0.3s; background: var(--input-bg); color: var(--text-main);}
+        input:focus { border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.3); }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        button:hover { background: #0056b3; transform: translateY(-2px); }
         .btn-secondary { background: #6c757d; }
         .btn-secondary:hover { background: #5a6268; }
         .btn-danger { background: #dc3545; }
         .btn-danger:hover { background: #c82333; }
         .screen { display: none; }
         .active { display: block; }
-        .app-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left; }
-        .request-item { background: #f8f9fa; padding: 10px; border-left: 4px solid #007bff; margin-bottom: 10px; text-align: left; font-size: 14px; }
-        .change-pwd-box { margin-top: 30px; padding-top: 20px; border-top: 2px dashed #ddd; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 5px; padding: 12px; position: fixed; z-index: 1; left: 50%; bottom: 30px; transform: translateX(-50%); }
+        .app-card { border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; background: var(--slider-bg); }
+        .request-item { background: var(--slider-bg); padding: 12px; border-left: 4px solid #007bff; border-radius: 4px; margin-bottom: 10px; text-align: left; font-size: 14px; }
+        
+        /* Footer & Privacy */
+        footer { margin-top: 30px; font-size: 13px; color: var(--text-main); text-align: center; }
+        footer a { color: #007bff; text-decoration: none; font-weight: bold; cursor: pointer;}
+        footer a:hover { text-decoration: underline; }
+        #privacyScreen { text-align: left; }
+        #privacyScreen p { font-size: 14px; line-height: 1.6; }
+
+        /* Toast Notification */
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 999; left: 50%; bottom: 30px; transform: translateX(-50%); box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
@@ -28,17 +178,57 @@
 </head>
 <body>
 
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <select id="langSelect" onchange="changeLanguage()">
+            <option value="gu" selected>ગુજરાતી</option>
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="mr">मराठी</option>
+            <option value="bn">বাংলা</option>
+        </select>
+        <button onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
+    </div>
+
     <div id="toast">Message</div>
 
     <div class="container">
+        
         <!-- Welcome Screen -->
         <div id="welcomeScreen" class="screen active">
-            <h2>Raj's Beta Apps</h2>
-            <p>Get early access to my upcoming apps!</p>
-            <button onclick="showScreen('signupScreen')">Create Account</button>
-            <button class="btn-secondary" onclick="showScreen('loginScreen')">User Login</button>
-            <br><br>
-            <button class="btn-danger" onclick="showScreen('adminLoginScreen')">Admin Panel</button>
+            
+            <h2 style="margin-top: 0;">Raj's Beta Apps</h2>
+            
+            <!-- Dynamic Instructions -->
+            <div id="instructionText" class="instruction-box">
+                Playstore માં Rajkumar Baria દ્વારા બનાવેલ apps સૌથી પહેલા એટલે કે early access માં વાપરવા માટે નીચે તમારું ખાતું બનાવો અને પછી લોગીન કરી જે app સૌથી પહેલા વાપરવા માંગતા હોય એ apps સિલેક્ટ કરો. તમને 24 કલાક માં એક લિંક મળશે, એને ઓપન કરતા Play Store માં તમને app મળી જશે.
+            </div>
+
+            <!-- Profile Slider Toggle -->
+            <button class="slider-btn" onclick="toggleProfile()" id="sliderBtnText">મારો પ્રોફાઇલ જુઓ ▼</button>
+            
+            <!-- Hidden Profile Box -->
+            <div id="profileSlider" class="profile-slider">
+                <div class="cover-pic"></div>
+                <img src="https://raw.githubusercontent.com/RajBaria/my-downloads/main/rajdp.png" class="profile-pic" alt="Raj Baria">
+                <h3 style="margin: 10px 0 0 0;">Rajkumar Baria</h3>
+                <p style="margin: 2px 0 10px 0; font-size: 13px;">Beta Apps & Early Access</p>
+                
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/1EK5jqWrK9/" target="_blank" class="social-icon fb"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/rajsbaria/" target="_blank" class="social-icon ig"><i class="fab fa-instagram"></i></a>
+                    <a href="https://x.com/raj_baria" target="_blank" class="social-icon x-twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://wa.me/916352840795" target="_blank" class="social-icon wa"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:rk3171998@gmail.com" class="social-icon mail"><i class="fas fa-envelope"></i></a>
+                    <a href="https://rajbaria.github.io/my-downloads/" target="_blank" class="social-icon web"><i class="fas fa-globe"></i></a>
+                </div>
+            </div>
+
+            <div style="padding-top: 10px;">
+                <button id="btnCreate" onclick="showScreen('signupScreen')">Create Account</button>
+                <button id="btnLogin" class="btn-secondary" onclick="showScreen('loginScreen')">User Login</button>
+                <button id="btnAdmin" class="btn-danger" style="margin-top: 20px;" onclick="showScreen('adminLoginScreen')">Admin Panel</button>
+            </div>
         </div>
 
         <!-- Signup Screen -->
@@ -72,26 +262,26 @@
         <!-- User Dashboard -->
         <div id="userDashboard" class="screen">
             <h2>Upcoming Apps</h2>
-            <p>Welcome, <span id="userNameDisplay">User</span>!</p>
+            <p>Welcome, <b id="userNameDisplay">User</b>!</p>
             
             <div class="app-card">
-                <h3>1. AI Photo Editor</h3>
-                <p>Edit photos automatically using AI.</p>
+                <h3 style="margin-top:0;">1. AI Photo Editor</h3>
+                <p style="font-size: 14px;">Edit photos automatically using AI.</p>
                 <button onclick="requestApp('AI Photo Editor')">Request Early Access</button>
             </div>
             <div class="app-card">
-                <h3>2. Smart Task Manager</h3>
-                <p>Manage your daily routine easily.</p>
+                <h3 style="margin-top:0;">2. Smart Task Manager</h3>
+                <p style="font-size: 14px;">Manage your daily routine easily.</p>
                 <button onclick="requestApp('Smart Task Manager')">Request Early Access</button>
             </div>
             
-            <button class="btn-danger" onclick="logout()">Logout</button>
+            <button class="btn-danger" style="margin-top: 15px;" onclick="logout()">Logout</button>
         </div>
 
         <!-- Admin Login Screen -->
         <div id="adminLoginScreen" class="screen">
             <h2>Admin Login</h2>
-            <p style="font-size: 13px; color: gray;">(Default password is: admin123)</p>
+            <p style="font-size: 13px;">(Enter your admin password)</p>
             <input type="password" id="adminPwd" placeholder="Enter Admin Password">
             <button onclick="loginAdmin()">Login to Admin</button>
             <button class="btn-secondary" onclick="showScreen('welcomeScreen')">Back</button>
@@ -100,27 +290,99 @@
         <!-- Admin Dashboard -->
         <div id="adminDashboard" class="screen">
             <h2>Admin Panel</h2>
-            <p>Users who requested apps:</p>
+            <p style="margin-bottom: 5px;">Users who requested apps:</p>
             <div id="requestList" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
                 Loading requests...
             </div>
             
-            <!-- Change Password Section -->
-            <div class="change-pwd-box">
-                <h3 style="margin-top: 0;">Change Admin Password</h3>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed var(--border-color);">
+                <h3 style="margin-top: 0; font-size: 18px;">Change Admin Password</h3>
                 <input type="password" id="newAdminPwd" placeholder="Enter New Password">
                 <button class="btn-secondary" onclick="changeAdminPassword()">Update Password</button>
             </div>
-
             <button class="btn-danger" style="margin-top: 20px;" onclick="logout()">Logout</button>
         </div>
+
+        <!-- Privacy Policy Screen -->
+        <div id="privacyScreen" class="screen">
+            <h2>Privacy Policy</h2>
+            <p>અમે તમારી ગોપનીયતા (Privacy) નું સંપૂર્ણ સન્માન કરીએ છીએ. તમે અહીં જે પણ માહિતી આપો છો તે સંપૂર્ણપણે ગુપ્ત અને સુરક્ષિત રહેશે.</p>
+            <p>તમારું નામ, ઇમેઇલ આઇડી, જન્મ તારીખ અને પાસવર્ડ ડેટા કોઈપણ અન્ય વ્યક્તિ કે કંપની (Third Party) સાથે શેર કરવામાં આવશે નહીં.</p>
+            <p>અમે આ ડેટાનો ઉપયોગ ફક્ત તમને Play Store માટે Early Access ની લિંક મોકલવા માટે જ કરીએ છીએ.</p>
+            <p>જો તમને કોઈ સમસ્યા હોય, તો તમે અમારો સોશિયલ મીડિયા પર સંપર્ક કરી શકો છો.</p>
+            <button class="btn-secondary" style="margin-top:20px;" onclick="showScreen('welcomeScreen')">Back to Home</button>
+        </div>
+
     </div>
 
-    <!-- UI Scripts -->
+    <!-- Footer Area -->
+    <footer>
+        &copy; 2026 All copyrights Rajkumar. <br><br>
+        <a onclick="showScreen('privacyScreen')">Privacy Policy & Terms</a>
+    </footer>
+
+    <!-- UI & Translation Scripts -->
     <script>
+        const translations = {
+            gu: {
+                instruction: "દુનિયા વાપરે તે પહેલાં નવી એપ્સ અજમાવવા માંગો છો? રાજકુમાર બારીઆ દ્વારા ડેવલપ કરાયેલી શાનદાર એપ્સનો 'Early Access' મેળવવા માટે આજે જ તમારું એકાઉન્ટ બનાવો! લોગિન કરો અને તમારી ફેવરિટ એપ સિલેક્ટ કરો. માત્ર ૨૪ કલાકમાં તમને એક એક્સક્લુઝિવ લિંક મળશે, જેના પર ક્લિક કરતાં જ એપ સીધી Play Store પરથી તમારા ફોનમાં ડાઉનલોડ થવા માટે તૈયાર હશે. તો રાહ શેની? ચાલો, કંઈક નવું અનુભવીએ!",
+                profileBtn: "મારો પ્રોફાઇલ જુઓ ▼",
+                createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
+            },
+            en: {
+                instruction: "Want to try new apps before the world does? Create your account today to get 'Early Access' to amazing apps developed by Rajkumar Baria! Log in and select your favorite app. Within 24 hours, you'll receive an exclusive link. Just click it, and the app will be ready to download directly from the Play Store. What are you waiting for? Let's experience something new!",
+                profileBtn: "View My Profile ▼",
+                createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
+            },
+            hi: {
+                instruction: "दुनिया इस्तेमाल करे उससे पहले नए ऐप्स आजमाना चाहते हैं? राजकुमार बारिया द्वारा विकसित शानदार ऐप्स का 'Early Access' पाने के लिए आज ही अपना अकाउंट बनाएं! लॉग इन करें और अपना पसंदीदा ऐप चुनें। मात्र 24 घंटे में आपको एक एक्सक्लूसिव लिंक मिलेगा, जिस पर क्लिक करते ही ऐप सीधे Play Store से आपके फोन में डाउनलोड होने के लिए तैयार होगा। तो इंतज़ार किस बात का? आइए, कुछ नया अनुभव करें!",
+                profileBtn: "मेरी प्रोफ़ाइल देखें ▼",
+                createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
+            },
+            mr: {
+                instruction: "जग वापरण्यापूर्वी नवीन ॲप्स वापरून पहायचे आहेत? राजकुमार बारिया यांनी विकसित केलेल्या अप्रतिम ॲप्सचा 'Early Access' मिळवण्यासाठी आजच तुमचे खाते तयार करा! लॉग इन करा आणि तुमचे आवडते ॲप निवडा. अवघ्या २४ तासांत तुम्हाला एक विशेष लिंक मिळेल, ज्यावर क्लिक करताच ॲप थेट Play Store वरून डाउनलोड करण्यासाठी तयार असेल. मग वाट कसली पाहताय? चला, काहीतरी नवीन अनुभवूया!",
+                profileBtn: "माझी प्रोफाइल पहा ▼",
+                createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
+            },
+            bn: {
+                instruction: "দুনিয়া ব্যবহার করার আগে নতুন অ্যাপস ট্রাই করতে চান? রাজকুমার বারিয়া দ্বারা তৈরি চমৎকার অ্যাপগুলির 'Early Access' পেতে আজই আপনার অ্যাকাউন্ট তৈরি করুন! লগ ইন করুন এবং আপনার পছন্দের অ্যাপটি নির্বাচন করুন। মাত্র ২৪ ঘন্টার মধ্যে আপনি একটি এক্সক্লুসিভ লিঙ্ক পাবেন, যেটিতে ক্লিক করলেই অ্যাপটি সরাসরি Play Store থেকে আপনার ফোনে ডাউনলোড হওয়ার জন্য প্রস্তুত হয়ে যাবে। তাহলে আর দেরি কেন? আসুন নতুন কিছু অভিজ্ঞতা করি!",
+                profileBtn: "আমার প্রোফাইল দেখুন ▼",
+                createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('langSelect').value;
+            document.getElementById('instructionText').innerText = translations[lang].instruction;
+            document.getElementById('sliderBtnText').innerText = translations[lang].profileBtn;
+            document.getElementById('btnCreate').innerText = translations[lang].createAcc;
+            document.getElementById('btnLogin').innerText = translations[lang].loginUser;
+            document.getElementById('btnAdmin').innerText = translations[lang].adminPanel;
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const themeBtn = document.getElementById('themeBtn');
+            if (document.body.classList.contains('dark-mode')) {
+                themeBtn.innerHTML = "☀️ Light Mode";
+            } else {
+                themeBtn.innerHTML = "🌙 Dark Mode";
+            }
+        }
+
+        function toggleProfile() {
+            const slider = document.getElementById('profileSlider');
+            if (slider.style.display === 'block') {
+                slider.style.display = 'none';
+            } else {
+                slider.style.display = 'block';
+            }
+        }
+
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0,0);
         }
 
         function showToast(message) {
@@ -149,24 +411,20 @@
             projectId: "betaapps-876f2",
             storageBucket: "betaapps-876f2.firebasestorage.app",
             messagingSenderId: "832790508568",
-            appId: "1:832790508568:web:3eb70a84d1a55746abff6d",
-            measurementId: "G-YXY9B1E4S0"
+            appId: "1:832790508568:web:3eb70a84d1a55746abff6d"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Make functions globally available for HTML buttons
         window.sendOTP = async function() {
             const email = document.getElementById('regEmail').value;
             const name = document.getElementById('regName').value;
             if(!email || !name) return showToast("Please fill all details!");
             
             localStorage.setItem('tempUser', JSON.stringify({
-                name: name,
-                email: email,
-                password: document.getElementById('regPwd').value
+                name: name, email: email, password: document.getElementById('regPwd').value
             }));
             showScreen('otpScreen');
             showToast("OTP sent! Use 123456");
@@ -184,129 +442,75 @@
                     showToast("Account Created!");
                     document.getElementById('userNameDisplay').innerText = user.name;
                     showScreen('userDashboard');
-                } catch(e) {
-                    showToast("Error connecting database!");
-                    console.log(e);
-                }
-            } else {
-                showToast("Invalid OTP!");
-            }
+                } catch(e) { showToast("Error connecting database!"); }
+            } else { showToast("Invalid OTP!"); }
         };
 
         window.loginUser = async function() {
             const email = document.getElementById('loginEmail').value;
             const pwd = document.getElementById('loginPwd').value;
-            
             try {
                 await signInAnonymously(auth);
                 const docSnap = await getDoc(doc(db, "users", email));
-                
                 if (docSnap.exists() && docSnap.data().password === pwd) {
                     localStorage.setItem('currentUser', JSON.stringify(docSnap.data()));
                     document.getElementById('userNameDisplay').innerText = docSnap.data().name;
                     showScreen('userDashboard');
                     showToast("Login Successful!");
-                } else {
-                    showToast("Wrong Email or Password!");
-                }
-            } catch(e) {
-                showToast("Login Failed!");
-            }
+                } else { showToast("Wrong Email or Password!"); }
+            } catch(e) { showToast("Login Failed!"); }
         };
 
         window.requestApp = async function(appName) {
             const user = JSON.parse(localStorage.getItem('currentUser'));
             if(!user) return showToast("Please login first!");
-
             try {
                 await addDoc(collection(db, "requests"), {
-                    userName: user.name,
-                    userEmail: user.email,
-                    appName: appName,
-                    status: "Pending",
-                    timestamp: serverTimestamp()
+                    userName: user.name, userEmail: user.email, appName: appName, status: "Pending", timestamp: serverTimestamp()
                 });
                 showToast("Request sent! You will get email in 24 hours.");
-            } catch(e) {
-                showToast("Failed to send request.");
-            }
+            } catch(e) { showToast("Failed to send request."); }
         };
-
-        // ====== ADMIN LOGIC (WITH DYNAMIC PASSWORD) ======
 
         window.loginAdmin = async function() {
             const pwdInput = document.getElementById('adminPwd').value;
             if(!pwdInput) return showToast("Enter password!");
-
             try {
                 await signInAnonymously(auth);
-                
-                // Get Admin Password from Firestore
                 const docRef = doc(db, "adminSettings", "config");
                 const docSnap = await getDoc(docRef);
-                
-                let actualAdminPwd = "admin123"; // Default if not changed yet
-                if (docSnap.exists() && docSnap.data().password) {
-                    actualAdminPwd = docSnap.data().password;
-                }
-
+                let actualAdminPwd = "admin123"; 
+                if (docSnap.exists() && docSnap.data().password) { actualAdminPwd = docSnap.data().password; }
                 if (pwdInput === actualAdminPwd) {
-                    showScreen('adminDashboard');
-                    showToast("Welcome Admin!");
-                    loadRequests();
-                } else {
-                    showToast("Wrong Admin Password!");
-                }
-            } catch(e) {
-                showToast("Admin login error!");
-                console.log(e);
-            }
+                    showScreen('adminDashboard'); showToast("Welcome Admin!"); loadRequests();
+                } else { showToast("Wrong Admin Password!"); }
+            } catch(e) { showToast("Admin login error!"); }
         };
 
         window.changeAdminPassword = async function() {
             const newPwd = document.getElementById('newAdminPwd').value;
             if(!newPwd || newPwd.length < 4) return showToast("Enter a valid new password!");
-
             try {
                 const docRef = doc(db, "adminSettings", "config");
-                // Update password in database
                 await setDoc(docRef, { password: newPwd }, { merge: true });
-                
                 showToast("Admin Password Changed Successfully!");
-                document.getElementById('newAdminPwd').value = ''; // clear input
-                document.getElementById('adminPwd').value = ''; // clear old login input
-            } catch(e) {
-                showToast("Failed to change password!");
-                console.log(e);
-            }
+                document.getElementById('newAdminPwd').value = ''; 
+                document.getElementById('adminPwd').value = ''; 
+            } catch(e) { showToast("Failed to change password!"); }
         };
 
         async function loadRequests() {
             const listDiv = document.getElementById('requestList');
             listDiv.innerHTML = "Fetching data...";
-            
             try {
                 const querySnapshot = await getDocs(collection(db, "requests"));
                 listDiv.innerHTML = "";
-                
-                if (querySnapshot.empty) {
-                    listDiv.innerHTML = "No requests found.";
-                    return;
-                }
-
+                if (querySnapshot.empty) { listDiv.innerHTML = "No requests found."; return; }
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    listDiv.innerHTML += `
-                        <div class="request-item">
-                            <b>User:</b> ${data.userName} <br>
-                            <b>Email:</b> ${data.userEmail} <br>
-                            <b>App Requested:</b> ${data.appName}
-                        </div>
-                    `;
+                    listDiv.innerHTML += `<div class="request-item"><b>User:</b> ${data.userName} <br><b>Email:</b> ${data.userEmail} <br><b>App Requested:</b> ${data.appName}</div>`;
                 });
-            } catch(e) {
-                listDiv.innerHTML = "Failed to load requests.";
-            }
+            } catch(e) { listDiv.innerHTML = "Failed to load requests."; }
         }
     </script>
 </body>
