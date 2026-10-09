@@ -7,6 +7,15 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
+    <!-- EmailJS SDK (For Real OTP) -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Your EmailJS Public Key
+            emailjs.init({ publicKey: "wqLsQq9bUFy9dheFv" });
+        })();
+    </script>
+
     <style>
         /* CSS Variables for Light/Dark Mode */
         :root {
@@ -201,7 +210,7 @@
             
             <!-- Dynamic Instructions -->
             <div id="instructionText" class="instruction-box">
-                Playstore માં Rajkumar Baria દ્વારા બનાવેલ apps સૌથી પહેલા એટલે કે early access માં વાપરવા માટે નીચે તમારું ખાતું બનાવો અને પછી લોગીન કરી જે app સૌથી પહેલા વાપરવા માંગતા હોય એ apps સિલેક્ટ કરો. તમને 24 કલાક માં એક લિંક મળશે, એને ઓપન કરતા Play Store માં તમને app મળી જશે.
+                દુનિયા વાપરે તે પહેલાં નવી એપ્સ અજમાવવા માંગો છો? રાજકુમાર બારીઆ દ્વારા ડેવલપ કરાયેલી શાનદાર એપ્સનો 'Early Access' મેળવવા માટે આજે જ તમારું એકાઉન્ટ બનાવો! લોગિન કરો અને તમારી ફેવરિટ એપ સિલેક્ટ કરો. માત્ર ૨૪ કલાકમાં તમને એક એક્સક્લુઝિવ લિંક મળશે, જેના પર ક્લિક કરતાં જ એપ સીધી Play Store પરથી તમારા ફોનમાં ડાઉનલોડ થવા માટે તૈયાર હશે. તો રાહ શેની? ચાલો, કંઈક નવું અનુભવીએ!
             </div>
 
             <!-- Profile Slider Toggle -->
@@ -245,7 +254,7 @@
         <!-- OTP Screen -->
         <div id="otpScreen" class="screen">
             <h2>Verify OTP</h2>
-            <p>Enter demo OTP: <b>123456</b></p>
+            <p style="font-size: 14px; color: var(--text-muted);">Please enter the 6-digit OTP sent to your email.</p>
             <input type="text" id="otpInput" placeholder="Enter OTP">
             <button onclick="verifyOTP()">Verify & Login</button>
         </div>
@@ -265,14 +274,14 @@
             <p>Welcome, <b id="userNameDisplay">User</b>!</p>
             
             <div class="app-card">
-                <h3 style="margin-top:0;">1. AI Photo Editor</h3>
-                <p style="font-size: 14px;">Edit photos automatically using AI.</p>
-                <button onclick="requestApp('AI Photo Editor')">Request Early Access</button>
+                <h3 style="margin-top:0;">1. Tables Master</h3>
+                <p style="font-size: 14px;">Master your math skills easily!</p>
+                <button onclick="requestApp('Tables Master')">Request Early Access</button>
             </div>
             <div class="app-card">
-                <h3 style="margin-top:0;">2. Smart Task Manager</h3>
-                <p style="font-size: 14px;">Manage your daily routine easily.</p>
-                <button onclick="requestApp('Smart Task Manager')">Request Early Access</button>
+                <h3 style="margin-top:0;">2. AI Photo Editor</h3>
+                <p style="font-size: 14px;">Edit photos automatically using AI.</p>
+                <button onclick="requestApp('AI Photo Editor')">Request Early Access</button>
             </div>
             
             <button class="btn-danger" style="margin-top: 15px;" onclick="logout()">Logout</button>
@@ -418,34 +427,72 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- REAL OTP SYSTEM USING EMAILJS ---
         window.sendOTP = async function() {
             const email = document.getElementById('regEmail').value;
             const name = document.getElementById('regName').value;
-            if(!email || !name) return showToast("Please fill all details!");
+            const pwd = document.getElementById('regPwd').value;
             
-            localStorage.setItem('tempUser', JSON.stringify({
-                name: name, email: email, password: document.getElementById('regPwd').value
-            }));
-            showScreen('otpScreen');
-            showToast("OTP sent! Use 123456");
+            if(!email || !name || !pwd) return showToast("Please fill all details!");
+            
+            showToast("Sending OTP... Please wait.");
+            
+            // Generate a 6-digit random OTP
+            const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+            try {
+                // Send email via EmailJS using your IDs
+                await emailjs.send("service_sni575u", "template_zwwmo7c", {
+                    to_name: name,
+                    to_email: email, 
+                    otp: generatedOtp
+                });
+
+                // Temporarily store data and OTP in browser storage
+                localStorage.setItem('tempUser', JSON.stringify({
+                    name: name, 
+                    email: email, 
+                    password: pwd,
+                    otp: generatedOtp 
+                }));
+
+                showScreen('otpScreen');
+                showToast("OTP sent to your email!");
+            } catch(error) {
+                console.error("EmailJS Error:", error);
+                showToast("Failed to send OTP. Check your email ID.");
+            }
         };
 
         window.verifyOTP = async function() {
-            const otp = document.getElementById('otpInput').value;
-            if (otp === "123456") {
-                const user = JSON.parse(localStorage.getItem('tempUser'));
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                
+            const otpInput = document.getElementById('otpInput').value;
+            const tempUser = JSON.parse(localStorage.getItem('tempUser'));
+            
+            // Check if OTP matches the generated one
+            if (tempUser && otpInput === tempUser.otp) {
                 try {
                     await signInAnonymously(auth);
-                    await setDoc(doc(db, "users", user.email), user);
+                    
+                    // Remove the OTP from user data before saving to Firebase Database
+                    const dbUser = { name: tempUser.name, email: tempUser.email, password: tempUser.password };
+                    await setDoc(doc(db, "users", tempUser.email), dbUser);
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(dbUser));
+                    localStorage.removeItem('tempUser'); // Clear temp data
+                    
                     showToast("Account Created!");
-                    document.getElementById('userNameDisplay').innerText = user.name;
+                    document.getElementById('userNameDisplay').innerText = dbUser.name;
                     showScreen('userDashboard');
-                } catch(e) { showToast("Error connecting database!"); }
-            } else { showToast("Invalid OTP!"); }
+                } catch(e) { 
+                    showToast("Error connecting database!"); 
+                    console.log(e);
+                }
+            } else { 
+                showToast("Invalid OTP! Please try again."); 
+            }
         };
 
+        // --- LOGIN & ADMIN SYSTEM ---
         window.loginUser = async function() {
             const email = document.getElementById('loginEmail').value;
             const pwd = document.getElementById('loginPwd').value;
