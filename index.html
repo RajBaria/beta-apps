@@ -99,6 +99,9 @@
         .btn-outline { background: transparent; color: #007bff; border: 2px solid #007bff; }
         .btn-outline:hover { background: #007bff; color: white; transform: translateY(-2px); }
         
+        .forgot-link { color: #007bff; font-size: 14px; text-decoration: none; cursor: pointer; display: block; margin: 5px 0 15px 0; font-weight: bold; text-align: right; width: 95%;}
+        .forgot-link:hover { text-decoration: underline; }
+        
         .screen { display: none; }
         .active { display: block; }
         
@@ -117,10 +120,7 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
         
-        /* New OTP Box Style */
-        .otp-box {
-            display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color); animation: fadein 0.5s;
-        }
+        .otp-box { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color); animation: fadein 0.5s; }
     </style>
 </head>
 <body>
@@ -167,7 +167,7 @@
             </div>
         </div>
 
-        <!-- Signup Screen WITH OTP BOX BELOW -->
+        <!-- Signup Screen -->
         <div id="signupScreen" class="screen">
             <h2>Sign Up</h2>
             <input type="text" id="regName" placeholder="Full Name">
@@ -177,7 +177,6 @@
             
             <button id="sendOtpBtn" onclick="sendOTP()">Sign Up (Send OTP)</button>
             
-            <!-- OTP Box -->
             <div id="otpSection" class="otp-box">
                 <h3 style="color: #28a745; margin-top: 0; font-size: 18px;"><i class="fas fa-check-circle"></i> OTP Sent!</h3>
                 <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Please enter the 6-digit OTP sent to your email.</p>
@@ -195,8 +194,43 @@
             <h2>User Login</h2>
             <input type="email" id="loginEmail" placeholder="Email ID">
             <input type="password" id="loginPwd" placeholder="Password">
+            
+            <!-- Forgot Password Link -->
+            <a class="forgot-link" onclick="showScreen('forgotPwdScreen')">Forgot Password?</a>
+            
             <button onclick="loginUser()">Login</button>
             <button class="btn-secondary" onclick="showScreen('welcomeScreen')">Back</button>
+        </div>
+
+        <!-- Forgot Password Screen -->
+        <div id="forgotPwdScreen" class="screen">
+            <h2>Reset Password</h2>
+            <p style="font-size: 14px; color: var(--text-muted);">Enter your registered Email ID to get an OTP.</p>
+            <input type="email" id="forgotEmail" placeholder="Enter Registered Email ID">
+            
+            <button id="sendForgotOtpBtn" onclick="sendForgotOTP()">Send OTP</button>
+            
+            <!-- Forgot OTP Section -->
+            <div id="forgotOtpSection" class="otp-box">
+                <h3 style="color: #28a745; margin-top: 0; font-size: 18px;"><i class="fas fa-check-circle"></i> OTP Sent!</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Enter the 6-digit OTP sent to your email.</p>
+                <p style="font-size: 12px; color: #dc3545; margin-top: 0; font-weight: bold;">(નોંધ: Spam ફોલ્ડર ચેક કરજો)</p>
+                
+                <input type="text" id="forgotOtpInput" placeholder="Enter OTP Here" style="text-align: center; letter-spacing: 2px; font-weight: bold;">
+                <button class="btn-success" onclick="verifyForgotOTP()">Verify OTP</button>
+            </div>
+
+            <!-- New Password Section -->
+            <div id="newPwdSection" class="otp-box">
+                <h3 style="color: #007bff; margin-top: 0; font-size: 18px;">Create New Password</h3>
+                <p style="font-size: 13px; color: #dc3545; font-weight: bold; margin-bottom: 10px;">
+                    <i class="fas fa-exclamation-triangle"></i> Dhyan rakho: Tamaro navo password yad rakhvo ane note ma lakhi levo. Divas ma ek j var password badli shakashe.
+                </p>
+                <input type="password" id="newResetPwd" placeholder="Enter New Password">
+                <button onclick="saveNewPassword()">Save New Password</button>
+            </div>
+
+            <button class="btn-secondary" onclick="showScreen('loginScreen')">Back to Login</button>
         </div>
 
         <!-- User Dashboard -->
@@ -204,7 +238,6 @@
             <h2>Upcoming Apps</h2>
             <p>Welcome, <b id="userNameDisplay">User</b>!</p>
             
-            <!-- App 1: Helical Solar System -->
             <div class="app-card">
                 <img src="https://raw.githubusercontent.com/RajBaria/beta-apps/main/Screenshot_20261009_220355_Google%20Play%20Store.jpg" alt="Helical Solar System Screenshot">
                 <h3 style="margin-top:0; margin-bottom: 8px;">1. Helical Solar System</h3>
@@ -213,7 +246,6 @@
                 <button class="btn-outline" style="margin-top: 8px;" onclick="window.open('https://play.google.com/store/apps/details?id=com.rajkumar.helicalsolarsystem', '_blank')"><i class="fab fa-google-play"></i> View on Play Store</button>
             </div>
 
-            <!-- App 2: Tables Master -->
             <div class="app-card">
                 <img src="https://raw.githubusercontent.com/RajBaria/beta-apps/main/Screenshot_20261009_220404_Google%20Play%20Store.jpg" alt="Tables Master Screenshot">
                 <h3 style="margin-top:0; margin-bottom: 8px;">2. Tables Master</h3>
@@ -252,7 +284,6 @@
             <p>તમારું નામ, ઇમેઇલ આઇડી, જન્મ તારીખ અને પાસવર્ડ ડેટા કોઈપણ અન્ય વ્યક્તિ કે કંપની સાથે શેર કરવામાં આવશે નહીં.</p>
             <button class="btn-secondary" style="margin-top:20px;" onclick="showScreen('welcomeScreen')">Back to Home</button>
         </div>
-
     </div>
 
     <footer>
@@ -262,26 +293,11 @@
 
     <script>
         const translations = {
-            gu: {
-                instruction: "દુનિયા વાપરે તે પહેલાં નવી એપ્સ અજમાવવા માંગો છો? રાજકુમાર બારીઆ દ્વારા ડેવલપ કરાયેલી શાનદાર એપ્સનો 'Early Access' મેળવવા માટે આજે જ તમારું એકાઉન્ટ બનાવો! લોગિન કરો અને તમારી ફેવરિટ એપ સિલેક્ટ કરો. માત્ર ૨૪ કલાકમાં તમને એક એક્સક્લુઝિવ લિંક મળશે, જેના પર ક્લિક કરતાં જ એપ સીધી Play Store પરથી તમારા ફોનમાં ડાઉનલોડ થવા માટે તૈયાર હશે.",
-                profileBtn: "મારો પ્રોફાઇલ જુઓ ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
-            },
-            en: {
-                instruction: "Want to try new apps before the world does? Create your account today to get 'Early Access' to amazing apps developed by Rajkumar Baria! Log in and select your favorite app. Within 24 hours, you'll receive an exclusive link. Just click it, and the app will be ready to download directly from the Play Store.",
-                profileBtn: "View My Profile ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
-            },
-            hi: {
-                instruction: "दुनिया इस्तेमाल करे उससे पहले नए ऐप्स आजमाना चाहते हैं? राजकुमार बारिया द्वारा विकसित शानदार ऐप्स का 'Early Access' पाने के लिए आज ही अपना अकाउंट बनाएं! मात्र 24 घंटे में आपको एक एक्सक्लूसिव लिंक मिलेगा, जिस पर क्लिक करते ही ऐप सीधे Play Store से आपके फोन में डाउनलोड होने के लिए तैयार होगा।",
-                profileBtn: "मेरी प्रोफ़ाइल देखें ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
-            },
-            mr: {
-                instruction: "जग वापरण्यापूर्वी नवीन ॲप्स वापरून पहायचे आहेत? राजकुमार बारिया यांनी विकसित केलेल्या अप्रतिम ॲप्सचा 'Early Access' मिळवण्यासाठी आजच तुमचे खाते तयार करा! अवघ्या २४ तासांत तुम्हाला एक विशेष लिंक मिळेल, ज्यावर क्लिक करताच ॲप थेट Play Store वरून डाउनलोड करण्यासाठी तयार असेल.",
-                profileBtn: "माझी प्रोफाइल पहा ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
-            },
-            bn: {
-                instruction: "দুনিয়া ব্যবহার করার আগে নতুন অ্যাপস ট্রাই করতে চান? রাজকুমার বারিয়া দ্বারা তৈরি চমৎকার অ্যাপগুলির 'Early Access' পেতে আজই আপনার অ্যাকাউন্ট তৈরি করুন! মাত্র ২৪ ঘন্টার মধ্যে আপনি একটি এক্সক্লুসিভ লিঙ্ক পাবেন, যেটিতে ক্লিক করলেই অ্যাপটি সরাসরি Play Store থেকে আপনার ফোনে ডাউনলোড হওয়ার জন্য প্রস্তুত হয়ে যাবে।",
-                profileBtn: "আমার প্রোফাইল দেখুন ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel"
-            }
+            gu: { instruction: "દુનિયા વાપરે તે પહેલાં નવી એપ્સ અજમાવવા માંગો છો? રાજકુમાર બારીઆ દ્વારા ડેવલપ કરાયેલી શાનદાર એપ્સનો 'Early Access' મેળવવા માટે આજે જ તમારું એકાઉન્ટ બનાવો! લોગિન કરો અને તમારી ફેવરિટ એપ સિલેક્ટ કરો. માત્ર ૨૪ કલાકમાં તમને એક એક્સક્લુઝિવ લિંક મળશે, જેના પર ક્લિક કરતાં જ એપ સીધી Play Store પરથી તમારા ફોનમાં ડાઉનલોડ થવા માટે તૈયાર હશે.", profileBtn: "મારો પ્રોફાઇલ જુઓ ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel" },
+            en: { instruction: "Want to try new apps before the world does? Create your account today to get 'Early Access' to amazing apps developed by Rajkumar Baria! Log in and select your favorite app. Within 24 hours, you'll receive an exclusive link. Just click it, and the app will be ready to download directly from the Play Store.", profileBtn: "View My Profile ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel" },
+            hi: { instruction: "दुनिया इस्तेमाल करे उससे पहले नए ऐप्स आजमाना चाहते हैं? राजकुमार बारिया द्वारा विकसित शानदार ऐप्स का 'Early Access' पाने के लिए आज ही अपना अकाउंट बनाएं! मात्र 24 घंटे में आपको एक एक्सक्लूसिव लिंक मिलेगा, जिस पर क्लिक करते ही ऐप सीधे Play Store से आपके फोन में डाउनलोड होने के लिए तैयार होगा।", profileBtn: "मेरी प्रोफ़ाइल देखें ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel" },
+            mr: { instruction: "जग वापरण्यापूर्वी नवीन ॲप्स वापरून पहायचे आहेत? राजकुमार बारिया यांनी विकसित केलेल्या अप्रतिम ॲप्सचा 'Early Access' मिळवण्यासाठी आजच तुमचे खाते तयार करा! अवघ्या २४ तासांत तुम्हाला एक विशेष लिंक मिळेल, ज्यावर क्लिक करताच ॲप थेट Play Store वरून डाउनलोड करण्यासाठी तयार असेल.", profileBtn: "माझी प्रोफाइल पहा ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel" },
+            bn: { instruction: "দুনিয়া ব্যবহার করার আগে নতুন অ্যাপস ট্রাই করতে চান? রাজকুমার বারিয়া দ্বারা তৈরি চমৎকার অ্যাপগুলির 'Early Access' পেতে আজই আপনার অ্যাকাউন্ট তৈরি করুন! মাত্র ২৪ ঘন্টার মধ্যে আপনি একটি এক্সক্লুসিভ লিঙ্ক পাবেন, যেটিতে ক্লিক করলেই অ্যাপটি সরাসরি Play Store থেকে আপনার ফোনে ডাউনলোড হওয়ার জন্য প্রস্তুত হয়ে যাবে।", profileBtn: "আমার প্রোফাইল দেখুন ▼", createAcc: "Create Account", loginUser: "User Login", adminPanel: "Admin Panel" }
         };
 
         function changeLanguage() {
@@ -313,6 +329,12 @@
                 document.getElementById('sendOtpBtn').style.display = 'block';
                 document.getElementById('sendOtpBtn').innerText = 'Sign Up (Send OTP)';
             }
+            if(screenId === 'forgotPwdScreen') {
+                document.getElementById('forgotOtpSection').style.display = 'none';
+                document.getElementById('newPwdSection').style.display = 'none';
+                document.getElementById('sendForgotOtpBtn').style.display = 'block';
+                document.getElementById('sendForgotOtpBtn').innerText = 'Send OTP';
+            }
         }
 
         function showToast(message) {
@@ -332,7 +354,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBYX0Q9G-83NeGVo2o1Q5ZvXBZQ5ArnvNg",
@@ -347,6 +369,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- SIGNUP OTP LOGIC ---
         window.sendOTP = async function() {
             const email = document.getElementById('regEmail').value;
             const name = document.getElementById('regName').value;
@@ -361,23 +384,17 @@
 
             try {
                 await emailjs.send("service_sni575u", "template_y7gcqre", {
-                    to_name: name,
-                    to_email: email, 
-                    otp: generatedOtp
+                    to_name: name, to_email: email, otp: generatedOtp
                 }, "wqLsQq9bUFy9dheFv");
 
-                localStorage.setItem('tempUser', JSON.stringify({
-                    name: name, email: email, password: pwd, otp: generatedOtp 
-                }));
+                localStorage.setItem('tempUser', JSON.stringify({ name: name, email: email, password: pwd, otp: generatedOtp }));
 
                 btn.style.display = 'none';
                 document.getElementById('otpSection').style.display = 'block';
                 showToast("OTP sent to your email successfully!");
-                
             } catch(error) {
-                console.error("EmailJS Error:", error);
                 btn.innerText = "Sign Up (Send OTP)";
-                showToast("Error: " + (error.text || "Failed to send OTP. Check EmailJS Dashboard."));
+                showToast("Error: Failed to send OTP.");
             }
         };
 
@@ -403,6 +420,103 @@
             }
         };
 
+        // --- FORGOT PASSWORD LOGIC (UPDATED WITH REQUIREMENTS) ---
+        window.sendForgotOTP = async function() {
+            const email = document.getElementById('forgotEmail').value;
+            if(!email) return showToast("Please enter your email!");
+
+            const btn = document.getElementById('sendForgotOtpBtn');
+            btn.innerText = "Checking Details...";
+
+            try {
+                const docSnap = await getDoc(doc(db, "users", email));
+                if (!docSnap.exists()) {
+                    btn.innerText = "Send OTP";
+                    return showToast("Email not registered! Please sign up first.");
+                }
+
+                const userData = docSnap.data();
+                const today = new Date().toISOString().split('T')[0];
+
+                // Check if user already changed password today
+                if (userData.lastPwdReset === today) {
+                    btn.innerText = "Send OTP";
+                    return showToast("Tame aaje password badli chukya cho. Kale fari try karo.");
+                }
+
+                // Daily Ek j OTP Logic
+                let otpData = JSON.parse(localStorage.getItem('dailyOtp_' + email));
+                let generatedOtp;
+                
+                if (otpData && otpData.date === today) {
+                    generatedOtp = otpData.otp; // Reuse same OTP if requested today
+                } else {
+                    generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+                    localStorage.setItem('dailyOtp_' + email, JSON.stringify({ date: today, otp: generatedOtp }));
+                }
+
+                try {
+                    await emailjs.send("service_sni575u", "template_y7gcqre", {
+                        to_name: userData.name, to_email: email, otp: generatedOtp
+                    }, "wqLsQq9bUFy9dheFv");
+
+                    localStorage.setItem('forgotUser', JSON.stringify({ email: email, otp: generatedOtp }));
+
+                    btn.style.display = 'none';
+                    document.getElementById('forgotOtpSection').style.display = 'block';
+                    showToast("OTP sent to your email successfully!");
+                } catch (emailErr) {
+                    console.error(emailErr);
+                    btn.innerText = "Send OTP";
+                    showToast("OTP send nathi thayo, kripaya Raj Baria ne message karo.");
+                }
+            } catch(error) {
+                console.error(error);
+                btn.innerText = "Send OTP";
+                showToast("Error checking details!");
+            }
+        };
+
+        window.verifyForgotOTP = function() {
+            const otpInput = document.getElementById('forgotOtpInput').value;
+            const forgotUser = JSON.parse(localStorage.getItem('forgotUser'));
+
+            if (forgotUser && otpInput === forgotUser.otp) {
+                document.getElementById('forgotOtpSection').style.display = 'none';
+                document.getElementById('newPwdSection').style.display = 'block';
+                showToast("OTP Verified! Create your new password.");
+            } else {
+                showToast("Invalid OTP! Please check your email.");
+            }
+        };
+
+        window.saveNewPassword = async function() {
+            const newPwd = document.getElementById('newResetPwd').value;
+            const forgotUser = JSON.parse(localStorage.getItem('forgotUser'));
+
+            if (!newPwd || newPwd.length < 4) return showToast("Enter a valid new password!");
+
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                await updateDoc(doc(db, "users", forgotUser.email), { 
+                    password: newPwd,
+                    lastPwdReset: today
+                });
+                
+                localStorage.removeItem('forgotUser');
+                showToast("Password Reset Successful! Please Login.");
+                
+                document.getElementById('forgotEmail').value = '';
+                document.getElementById('forgotOtpInput').value = '';
+                document.getElementById('newResetPwd').value = '';
+                
+                showScreen('loginScreen');
+            } catch(e) {
+                showToast("Failed to update password!");
+            }
+        };
+
+        // --- GENERAL LOGIC ---
         window.loginUser = async function() {
             const email = document.getElementById('loginEmail').value;
             const pwd = document.getElementById('loginPwd').value;
