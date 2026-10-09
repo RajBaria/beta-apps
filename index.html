@@ -96,10 +96,15 @@
         .btn-danger:hover { background: #c82333; }
         .btn-success { background: #28a745; }
         .btn-success:hover { background: #218838; }
+        .btn-outline { background: transparent; color: #007bff; border: 2px solid #007bff; }
+        .btn-outline:hover { background: #007bff; color: white; transform: translateY(-2px); }
         
         .screen { display: none; }
         .active { display: block; }
-        .app-card { border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; background: var(--slider-bg); }
+        
+        .app-card { border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: left; background: var(--slider-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .app-card img { width: 100%; max-height: 250px; border-radius: 8px; margin-bottom: 12px; object-fit: contain; background: rgba(0,0,0,0.03); }
+        
         .request-item { background: var(--slider-bg); padding: 12px; border-left: 4px solid #007bff; border-radius: 4px; margin-bottom: 10px; text-align: left; font-size: 14px; }
         
         footer { margin-top: 30px; font-size: 13px; color: var(--text-main); text-align: center; }
@@ -114,11 +119,7 @@
         
         /* New OTP Box Style */
         .otp-box {
-            display: none;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed var(--border-color);
-            animation: fadein 0.5s;
+            display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color); animation: fadein 0.5s;
         }
     </style>
 </head>
@@ -176,10 +177,12 @@
             
             <button id="sendOtpBtn" onclick="sendOTP()">Sign Up (Send OTP)</button>
             
-            <!-- OTP Box (Hidden by default) -->
+            <!-- OTP Box -->
             <div id="otpSection" class="otp-box">
                 <h3 style="color: #28a745; margin-top: 0; font-size: 18px;"><i class="fas fa-check-circle"></i> OTP Sent!</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">Please enter the 6-digit OTP sent to your email.</p>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px;">Please enter the 6-digit OTP sent to your email.</p>
+                <p style="font-size: 12px; color: #dc3545; margin-top: 0; font-weight: bold;">(નોંધ: જો ઈમેલ ના મળે તો તમારા Gmail ના 'Spam' ફોલ્ડરમાં ચોક્કસ ચેક કરો.)</p>
+                
                 <input type="text" id="otpInput" placeholder="Enter OTP Here" style="text-align: center; letter-spacing: 2px; font-weight: bold;">
                 <button class="btn-success" onclick="verifyOTP()">Verify & Register</button>
             </div>
@@ -201,15 +204,22 @@
             <h2>Upcoming Apps</h2>
             <p>Welcome, <b id="userNameDisplay">User</b>!</p>
             
+            <!-- App 1: Helical Solar System -->
             <div class="app-card">
-                <h3 style="margin-top:0;">1. Tables Master</h3>
-                <p style="font-size: 14px;">Master your math skills easily!</p>
-                <button onclick="requestApp('Tables Master')">Request Early Access</button>
+                <img src="https://raw.githubusercontent.com/RajBaria/beta-apps/main/Screenshot_20261009_220355_Google%20Play%20Store.jpg" alt="Helical Solar System Screenshot">
+                <h3 style="margin-top:0; margin-bottom: 8px;">1. Helical Solar System</h3>
+                <p style="font-size: 14px; margin-top:0;">Experience the dynamic 3D helical motion of our solar system!</p>
+                <button onclick="requestApp('Helical Solar System')">Request Early Access</button>
+                <button class="btn-outline" style="margin-top: 8px;" onclick="window.open('https://play.google.com/store/apps/details?id=com.rajkumar.helicalsolarsystem', '_blank')"><i class="fab fa-google-play"></i> View on Play Store</button>
             </div>
+
+            <!-- App 2: Tables Master -->
             <div class="app-card">
-                <h3 style="margin-top:0;">2. AI Photo Editor</h3>
-                <p style="font-size: 14px;">Edit photos automatically using AI.</p>
-                <button onclick="requestApp('AI Photo Editor')">Request Early Access</button>
+                <img src="https://raw.githubusercontent.com/RajBaria/beta-apps/main/Screenshot_20261009_220404_Google%20Play%20Store.jpg" alt="Tables Master Screenshot">
+                <h3 style="margin-top:0; margin-bottom: 8px;">2. Tables Master</h3>
+                <p style="font-size: 14px; margin-top:0;">Master your mathematics skills and multiplication tables easily!</p>
+                <button onclick="requestApp('Tables Master')">Request Early Access</button>
+                <button class="btn-outline" style="margin-top: 8px;" onclick="window.open('https://play.google.com/store/apps/details?id=com.rajkumarbaria.tablesmaster', '_blank')"><i class="fab fa-google-play"></i> View on Play Store</button>
             </div>
             
             <button class="btn-danger" style="margin-top: 15px;" onclick="logout()">Logout</button>
@@ -298,7 +308,6 @@
             document.getElementById(screenId).classList.add('active');
             window.scrollTo(0,0);
             
-            // Reset OTP box when opening signup screen
             if(screenId === 'signupScreen') {
                 document.getElementById('otpSection').style.display = 'none';
                 document.getElementById('sendOtpBtn').style.display = 'block';
@@ -338,7 +347,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- REAL OTP SYSTEM WITH DIRECT PUBLIC KEY & UI UPDATE ---
         window.sendOTP = async function() {
             const email = document.getElementById('regEmail').value;
             const name = document.getElementById('regName').value;
@@ -352,7 +360,6 @@
             const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
             try {
-                // Pass PublicKey directly in the send function to prevent loading issues
                 await emailjs.send("service_sni575u", "template_y7gcqre", {
                     to_name: name,
                     to_email: email, 
@@ -363,7 +370,6 @@
                     name: name, email: email, password: pwd, otp: generatedOtp 
                 }));
 
-                // Hide Sign Up button and Show OTP Box
                 btn.style.display = 'none';
                 document.getElementById('otpSection').style.display = 'block';
                 showToast("OTP sent to your email successfully!");
@@ -371,7 +377,6 @@
             } catch(error) {
                 console.error("EmailJS Error:", error);
                 btn.innerText = "Sign Up (Send OTP)";
-                // Show exact error message to help debugging
                 showToast("Error: " + (error.text || "Failed to send OTP. Check EmailJS Dashboard."));
             }
         };
