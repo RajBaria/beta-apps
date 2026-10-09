@@ -3,223 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BetaApps - Early Access Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Beta Apps - Early Access</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
-            color: #f8fafc;
-        }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .hidden-screen {
-            display: none !important;
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b; 
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        h2 { color: #333; margin-bottom: 20px; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        button:hover { background: #0056b3; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        .screen { display: none; }
+        .active { display: block; }
+        .app-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left; }
+        .request-item { background: #f8f9fa; padding: 10px; border-left: 4px solid #007bff; margin-bottom: 10px; text-align: left; font-size: 14px; }
+        .change-pwd-box { margin-top: 30px; padding-top: 20px; border-top: 2px dashed #ddd; }
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 5px; padding: 12px; position: fixed; z-index: 1; left: 50%; bottom: 30px; transform: translateX(-50%); }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<body>
 
-    <!-- Toast Notification -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+    <div id="toast">Message</div>
 
-    <!-- Main App Container -->
-    <div class="w-full max-w-4xl glass-panel rounded-2xl shadow-2xl overflow-hidden fade-in relative">
-        
-        <!-- Header -->
-        <header class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                    <i class="fas fa-rocket text-white text-xl"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-white tracking-wide">Beta<span class="text-indigo-400">Apps</span></h1>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <h2>Raj's Beta Apps</h2>
+            <p>Get early access to my upcoming apps!</p>
+            <button onclick="showScreen('signupScreen')">Create Account</button>
+            <button class="btn-secondary" onclick="showScreen('loginScreen')">User Login</button>
+            <br><br>
+            <button class="btn-danger" onclick="showScreen('adminLoginScreen')">Admin Panel</button>
+        </div>
+
+        <!-- Signup Screen -->
+        <div id="signupScreen" class="screen">
+            <h2>Sign Up</h2>
+            <input type="text" id="regName" placeholder="Full Name">
+            <input type="email" id="regEmail" placeholder="Email ID">
+            <input type="date" id="regDob">
+            <input type="password" id="regPwd" placeholder="Create Password">
+            <button onclick="sendOTP()">Sign Up</button>
+            <button class="btn-secondary" onclick="showScreen('welcomeScreen')">Back</button>
+        </div>
+
+        <!-- OTP Screen -->
+        <div id="otpScreen" class="screen">
+            <h2>Verify OTP</h2>
+            <p>Enter demo OTP: <b>123456</b></p>
+            <input type="text" id="otpInput" placeholder="Enter OTP">
+            <button onclick="verifyOTP()">Verify & Login</button>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen">
+            <h2>User Login</h2>
+            <input type="email" id="loginEmail" placeholder="Email ID">
+            <input type="password" id="loginPwd" placeholder="Password">
+            <button onclick="loginUser()">Login</button>
+            <button class="btn-secondary" onclick="showScreen('welcomeScreen')">Back</button>
+        </div>
+
+        <!-- User Dashboard -->
+        <div id="userDashboard" class="screen">
+            <h2>Upcoming Apps</h2>
+            <p>Welcome, <span id="userNameDisplay">User</span>!</p>
+            
+            <div class="app-card">
+                <h3>1. AI Photo Editor</h3>
+                <p>Edit photos automatically using AI.</p>
+                <button onclick="requestApp('AI Photo Editor')">Request Early Access</button>
             </div>
-            <div>
-                <button id="nav-admin-btn" onclick="showScreen('admin-login-screen')" class="text-sm text-slate-400 hover:text-white transition mr-4">Admin</button>
-                <button id="nav-logout-btn" onclick="handleLogout()" class="hidden text-sm bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition">Logout</button>
+            <div class="app-card">
+                <h3>2. Smart Task Manager</h3>
+                <p>Manage your daily routine easily.</p>
+                <button onclick="requestApp('Smart Task Manager')">Request Early Access</button>
             </div>
-        </header>
+            
+            <button class="btn-danger" onclick="logout()">Logout</button>
+        </div>
 
-        <!-- Content Area -->
-        <main class="p-6 md:p-10 min-h-[500px] flex flex-col relative">
+        <!-- Admin Login Screen -->
+        <div id="adminLoginScreen" class="screen">
+            <h2>Admin Login</h2>
+            <p style="font-size: 13px; color: gray;">(Default password is: admin123)</p>
+            <input type="password" id="adminPwd" placeholder="Enter Admin Password">
+            <button onclick="loginAdmin()">Login to Admin</button>
+            <button class="btn-secondary" onclick="showScreen('welcomeScreen')">Back</button>
+        </div>
 
-            <!-- 1. LOGIN SCREEN -->
-            <div id="login-screen" class="w-full max-w-md mx-auto fade-in">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold mb-2">Welcome Back</h2>
-                    <p class="text-slate-400">Login to access upcoming apps</p>
-                </div>
-                <form id="login-form" class="space-y-5" onsubmit="handleLogin(event)">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
-                        <input type="email" id="login-email" required class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500" placeholder="you@example.com">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Password</label>
-                        <input type="password" id="login-password" required class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500" placeholder="••••••••">
-                    </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg shadow-indigo-600/30 transition transform hover:-translate-y-0.5">
-                        Login
-                    </button>
-                </form>
-                <p class="mt-6 text-center text-slate-400">
-                    Don't have an account? <a href="#" onclick="showScreen('signup-screen')" class="text-indigo-400 hover:text-indigo-300 font-medium">Sign up here</a>
-                </p>
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="screen">
+            <h2>Admin Panel</h2>
+            <p>Users who requested apps:</p>
+            <div id="requestList" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                Loading requests...
             </div>
-
-            <!-- 2. SIGNUP SCREEN -->
-            <div id="signup-screen" class="w-full max-w-md mx-auto hidden-screen fade-in">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold mb-2">Create Account</h2>
-                    <p class="text-slate-400">Join to test apps before anyone else</p>
-                </div>
-                <form id="signup-form" class="space-y-4" onsubmit="handleSignup(event)">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
-                        <input type="text" id="signup-name" required class="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Email Address</label>
-                        <input type="email" id="signup-email" required class="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Date of Birth</label>
-                        <input type="date" id="signup-dob" required class="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white" style="color-scheme: dark;">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">Create Password</label>
-                        <input type="password" id="signup-password" required minlength="6" class="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:border-indigo-500 text-white">
-                    </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition transform hover:-translate-y-0.5 mt-2">
-                        Create Account
-                    </button>
-                </form>
-                <p class="mt-4 text-center text-slate-400">
-                    Already have an account? <a href="#" onclick="showScreen('login-screen')" class="text-indigo-400 hover:text-indigo-300 font-medium">Login</a>
-                </p>
-            </div>
-
-            <!-- 3. OTP SCREEN -->
-            <div id="otp-screen" class="w-full max-w-md mx-auto hidden-screen fade-in">
-                <div class="text-center mb-8">
-                    <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-600">
-                        <i class="fas fa-envelope-open-text text-2xl text-indigo-400"></i>
-                    </div>
-                    <h2 class="text-3xl font-bold mb-2">Verify Email</h2>
-                    <p class="text-slate-400 text-sm">We've sent a code to your email.<br><span class="text-yellow-400 text-xs">(For this demo, please enter 123456)</span></p>
-                </div>
-                <form id="otp-form" class="space-y-6" onsubmit="handleVerifyOTP(event)">
-                    <div class="flex justify-center gap-2" id="otp-inputs">
-                        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold bg-slate-800 border border-slate-600 rounded-lg focus:border-indigo-500 focus:outline-none" required>
-                        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold bg-slate-800 border border-slate-600 rounded-lg focus:border-indigo-500 focus:outline-none" required>
-                        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold bg-slate-800 border border-slate-600 rounded-lg focus:border-indigo-500 focus:outline-none" required>
-                        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold bg-slate-800 border border-slate-600 rounded-lg focus:border-indigo-500 focus:outline-none" required>
-                        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold bg-slate-800 border border-slate-600 rounded-lg focus:border-indigo-500 focus:outline-none" required>
-                        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-bold bg-slate-800 border border-slate-600 rounded-lg focus:border-indigo-500 focus:outline-none" required>
-                    </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition">
-                        Verify & Continue
-                    </button>
-                </form>
+            
+            <!-- Change Password Section -->
+            <div class="change-pwd-box">
+                <h3 style="margin-top: 0;">Change Admin Password</h3>
+                <input type="password" id="newAdminPwd" placeholder="Enter New Password">
+                <button class="btn-secondary" onclick="changeAdminPassword()">Update Password</button>
             </div>
 
-            <!-- 4. DASHBOARD SCREEN -->
-            <div id="dashboard-screen" class="w-full hidden-screen fade-in">
-                <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold" id="user-greeting">Welcome, User!</h2>
-                        <p class="text-slate-400">Select the upcoming apps you want to beta test.</p>
-                    </div>
-                </div>
-
-                <!-- Apps Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="apps-container">
-                    <!-- Apps will be injected here via JS -->
-                </div>
-            </div>
-
-            <!-- 5. ADMIN LOGIN SCREEN -->
-            <div id="admin-login-screen" class="w-full max-w-sm mx-auto hidden-screen fade-in">
-                <div class="text-center mb-8">
-                    <i class="fas fa-shield-halved text-4xl text-rose-500 mb-4"></i>
-                    <h2 class="text-3xl font-bold mb-2">Admin Access</h2>
-                    <p class="text-slate-400">Enter admin password to view requests.<br><span class="text-xs text-yellow-400">(Demo password: admin123)</span></p>
-                </div>
-                <form class="space-y-4" onsubmit="handleAdminLogin(event)">
-                    <input type="password" id="admin-pwd" required class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:outline-none focus:border-rose-500 text-center tracking-widest text-white">
-                    <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transition">
-                        Access Dashboard
-                    </button>
-                    <button type="button" onclick="showScreen('login-screen')" class="w-full text-slate-400 hover:text-white py-2">Cancel</button>
-                </form>
-            </div>
-
-            <!-- 6. ADMIN DASHBOARD -->
-            <div id="admin-dashboard-screen" class="w-full hidden-screen fade-in">
-                <div class="mb-6 flex justify-between items-center">
-                    <h2 class="text-2xl font-bold text-rose-400"><i class="fas fa-users-cog mr-2"></i>Access Requests</h2>
-                    <button onclick="fetchAdminRequests()" class="bg-slate-700 hover:bg-slate-600 p-2 rounded-lg text-sm"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
-                </div>
-                
-                <div class="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-slate-800 text-slate-300">
-                                <tr>
-                                    <th class="px-6 py-4 font-medium">User Name</th>
-                                    <th class="px-6 py-4 font-medium">Email</th>
-                                    <th class="px-6 py-4 font-medium">Requested App</th>
-                                    <th class="px-6 py-4 font-medium">Date</th>
-                                    <th class="px-6 py-4 font-medium">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-requests-tbody" class="divide-y divide-slate-700/50">
-                                <!-- Requests will be loaded here -->
-                                <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">Loading requests...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </main>
+            <button class="btn-danger" style="margin-top: 20px;" onclick="logout()">Logout</button>
+        </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- UI Scripts -->
+    <script>
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
 
-        // તમારું પોતાનું Firebase Configuration અહી મૂકો:
-        const appId = 'beta-apps-demo'; 
+        function showToast(message) {
+            var toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            showScreen('welcomeScreen');
+            showToast("Logged out successfully");
+        }
+    </script>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyBYX0Q9G-83NeGVo2o1Q5ZvXBZQ5ArnvNg",
             authDomain: "betaapps-876f2.firebaseapp.com",
@@ -229,374 +152,162 @@
             appId: "1:832790508568:web:3eb70a84d1a55746abff6d",
             measurementId: "G-YXY9B1E4S0"
         };
-        
-        let app, db, auth;
-        let currentUserId = null;
-        let loggedInUser = null; // Our custom user object
-        let tempSignupData = null; // Holds data during OTP step
-        let isDemoMode = false; // Added to handle local testing
 
-        // App Data
-        const upcomingApps = [
-            { id: 'app_1', name: 'TaskFlow Pro', desc: 'Next-gen task management with AI suggestions.', icon: 'fa-check-double', color: 'text-blue-400', bg: 'bg-blue-400/10' },
-            { id: 'app_2', name: 'SnapEdit AI', desc: 'Remove backgrounds and enhance photos in 1 click.', icon: 'fa-image', color: 'text-purple-400', bg: 'bg-purple-400/10' },
-            { id: 'app_3', name: 'HealthSync', desc: 'Track your daily vitals seamlessly across devices.', icon: 'fa-heartbeat', color: 'text-rose-400', bg: 'bg-rose-400/10' },
-            { id: 'app_4', name: 'CodeAssist', desc: 'Mobile code snippet manager for developers.', icon: 'fa-code', color: 'text-emerald-400', bg: 'bg-emerald-400/10' }
-        ];
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        window.showScreen = function(screenId) {
-            const screens = ['login-screen', 'signup-screen', 'otp-screen', 'dashboard-screen', 'admin-login-screen', 'admin-dashboard-screen'];
-            screens.forEach(id => {
-                document.getElementById(id).classList.add('hidden-screen');
-            });
-            document.getElementById(screenId).classList.remove('hidden-screen');
+        // Make functions globally available for HTML buttons
+        window.sendOTP = async function() {
+            const email = document.getElementById('regEmail').value;
+            const name = document.getElementById('regName').value;
+            if(!email || !name) return showToast("Please fill all details!");
             
-            // Toggle Nav visibility
-            const navLogout = document.getElementById('nav-logout-btn');
-            const navAdmin = document.getElementById('nav-admin-btn');
-            
-            if (screenId === 'dashboard-screen' || screenId === 'admin-dashboard-screen') {
-                navLogout.classList.remove('hidden');
-                navAdmin.classList.add('hidden');
+            localStorage.setItem('tempUser', JSON.stringify({
+                name: name,
+                email: email,
+                password: document.getElementById('regPwd').value
+            }));
+            showScreen('otpScreen');
+            showToast("OTP sent! Use 123456");
+        };
+
+        window.verifyOTP = async function() {
+            const otp = document.getElementById('otpInput').value;
+            if (otp === "123456") {
+                const user = JSON.parse(localStorage.getItem('tempUser'));
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                try {
+                    await signInAnonymously(auth);
+                    await setDoc(doc(db, "users", user.email), user);
+                    showToast("Account Created!");
+                    document.getElementById('userNameDisplay').innerText = user.name;
+                    showScreen('userDashboard');
+                } catch(e) {
+                    showToast("Error connecting database!");
+                    console.log(e);
+                }
             } else {
-                navLogout.classList.add('hidden');
-                navAdmin.classList.remove('hidden');
+                showToast("Invalid OTP!");
             }
         };
 
-        window.showToast = function(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            
-            const bgColor = type === 'success' ? 'bg-emerald-500' : 'bg-rose-500';
-            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-            
-            toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0`;
-            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
-            
-            container.appendChild(toast);
-            
-            // Animate in
-            setTimeout(() => {
-                toast.classList.remove('translate-x-full', 'opacity-0');
-            }, 10);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-x-full');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        };
-
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            // Authenticate with your real Firebase
-            await signInAnonymously(auth);
-            
-            currentUserId = auth.currentUser.uid;
-            console.log("Firebase Connected");
-        } catch (error) {
-            console.error("Firebase Init Error:", error);
-            isDemoMode = true;
-            currentUserId = 'demo_user_123';
-            showToast("Demo Mode Active: Using local storage. Add real Firebase keys for live app.", "error");
-        }
-
-        // Handle OTP input auto-focus
-        const otpInputs = document.querySelectorAll('#otp-inputs input');
-        otpInputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                }
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-            });
-        });
-
-        window.handleSignup = function(e) {
-            e.preventDefault();
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const dob = document.getElementById('signup-dob').value;
-            const password = document.getElementById('signup-password').value;
-
-            // Store data temporarily and move to OTP screen
-            tempSignupData = { name, email, dob, password };
-            showScreen('otp-screen');
-            showToast("OTP sent to your email!", "success");
-            
-            // Clear inputs
-            otpInputs.forEach(input => input.value = '');
-            otpInputs[0].focus();
-        };
-
-        window.handleVerifyOTP = async function(e) {
-            e.preventDefault();
-            const otp = Array.from(otpInputs).map(input => input.value).join('');
-            
-            if (otp !== '123456') {
-                showToast("Invalid OTP. Please use 123456.", "error");
-                return;
-            }
-
-            try {
-                const userId = btoa(tempSignupData.email).replace(/=/g, ''); 
-                
-                if (isDemoMode) {
-                    localStorage.setItem(`user_${userId}`, JSON.stringify({
-                        name: tempSignupData.name,
-                        email: tempSignupData.email,
-                        dob: tempSignupData.dob,
-                        password: btoa(tempSignupData.password) 
-                    }));
-                } else {
-                    if(!currentUserId) throw new Error("Not connected to server");
-                    const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'registered_users', userId);
-                    await setDoc(userRef, {
-                        name: tempSignupData.name,
-                        email: tempSignupData.email,
-                        dob: tempSignupData.dob,
-                        password: btoa(tempSignupData.password), // Mock hashing for demo
-                        createdAt: serverTimestamp()
-                    });
-                }
-
-                loggedInUser = { id: userId, name: tempSignupData.name, email: tempSignupData.email };
-                showToast("Account verified successfully!", "success");
-                loadDashboard();
-            } catch (error) {
-                console.error(error);
-                showToast("Error creating account.", "error");
-            }
-        };
-
-        window.handleLogin = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            try {
-                const userId = btoa(email).replace(/=/g, '');
-                let data = null;
-
-                if (isDemoMode) {
-                    const localData = localStorage.getItem(`user_${userId}`);
-                    if (localData) data = JSON.parse(localData);
-                } else {
-                    const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'registered_users', userId);
-                    const docSnap = await getDoc(userRef);
-                    if (docSnap.exists()) data = docSnap.data();
-                }
-
-                if (data) {
-                    if (data.password === btoa(password)) {
-                        loggedInUser = { id: userId, name: data.name, email: data.email };
-                        showToast("Login successful!", "success");
-                        loadDashboard();
-                    } else {
-                        showToast("Incorrect password.", "error");
-                    }
-                } else {
-                    showToast("Account not found. Please sign up.", "error");
-                }
-            } catch (error) {
-                console.error(error);
-                showToast("Login failed.", "error");
-            }
-        };
-
-        window.handleLogout = function() {
-            loggedInUser = null;
-            document.getElementById('login-form').reset();
-            document.getElementById('signup-form').reset();
-            showScreen('login-screen');
-        };
-
-        function loadDashboard() {
-            if (!loggedInUser) return;
-            
-            document.getElementById('user-greeting').innerText = `Hello, ${loggedInUser.name}!`;
-            showScreen('dashboard-screen');
-            renderApps();
-        }
-
-        function renderApps() {
-            const container = document.getElementById('apps-container');
-            container.innerHTML = '';
-
-            upcomingApps.forEach(appItem => {
-                const card = document.createElement('div');
-                card.className = 'bg-slate-800/80 border border-slate-700 rounded-xl p-6 flex flex-col hover:border-indigo-500 transition-colors group relative overflow-hidden';
-                
-                // Add a glowing effect background
-                const glow = document.createElement('div');
-                glow.className = `absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-20 ${appItem.bg}`;
-                card.appendChild(glow);
-
-                card.innerHTML += `
-                    <div class="flex items-center gap-4 mb-4 relative z-10">
-                        <div class="w-12 h-12 rounded-lg ${appItem.bg} flex items-center justify-center">
-                            <i class="fas ${appItem.icon} ${appItem.color} text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold">${appItem.name}</h3>
-                    </div>
-                    <p class="text-slate-400 text-sm mb-6 flex-grow relative z-10">${appItem.desc}</p>
-                    <button onclick="requestAccess('${appItem.id}')" id="btn-${appItem.id}" class="w-full py-2.5 rounded-lg font-medium bg-slate-700 hover:bg-indigo-600 text-white transition-all relative z-10">
-                        Request Early Access
-                    </button>
-                `;
-                container.appendChild(card);
-            });
-            
-            // Check which ones are already requested
-            checkExistingRequests();
-        }
-
-        async function checkExistingRequests() {
-            if (!loggedInUser || !currentUserId) return;
+        window.loginUser = async function() {
+            const email = document.getElementById('loginEmail').value;
+            const pwd = document.getElementById('loginPwd').value;
             
             try {
-                let userRequests = [];
-
-                if (isDemoMode) {
-                    const allReqs = JSON.parse(localStorage.getItem('app_requests') || '[]');
-                    userRequests = allReqs.filter(r => r.userEmail === loggedInUser.email);
-                } else {
-                    const requestsRef = collection(db, 'artifacts', appId, 'public', 'data', 'app_requests');
-                    const qSnap = await getDocs(requestsRef);
-                    qSnap.forEach(doc => {
-                        if (doc.data().userEmail === loggedInUser.email) {
-                            userRequests.push(doc.data());
-                        }
-                    });
-                }
+                await signInAnonymously(auth);
+                const docSnap = await getDoc(doc(db, "users", email));
                 
-                userRequests.forEach(data => {
-                    const btn = document.getElementById(`btn-${data.appId}`);
-                    if (btn) {
-                        btn.innerText = 'Requested ✓';
-                        btn.className = 'w-full py-2.5 rounded-lg font-medium bg-emerald-600 text-white cursor-not-allowed';
-                        btn.disabled = true;
-                    }
+                if (docSnap.exists() && docSnap.data().password === pwd) {
+                    localStorage.setItem('currentUser', JSON.stringify(docSnap.data()));
+                    document.getElementById('userNameDisplay').innerText = docSnap.data().name;
+                    showScreen('userDashboard');
+                    showToast("Login Successful!");
+                } else {
+                    showToast("Wrong Email or Password!");
+                }
+            } catch(e) {
+                showToast("Login Failed!");
+            }
+        };
+
+        window.requestApp = async function(appName) {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if(!user) return showToast("Please login first!");
+
+            try {
+                await addDoc(collection(db, "requests"), {
+                    userName: user.name,
+                    userEmail: user.email,
+                    appName: appName,
+                    status: "Pending",
+                    timestamp: serverTimestamp()
                 });
-            } catch (e) {
-                console.error("Error checking requests", e);
-            }
-        }
-
-        window.requestAccess = async function(appIdToRequest) {
-            if (!loggedInUser || !currentUserId) return;
-            
-            const btn = document.getElementById(`btn-${appIdToRequest}`);
-            const originalText = btn.innerText;
-            btn.innerText = 'Sending...';
-            btn.disabled = true;
-
-            const requestedApp = upcomingApps.find(a => a.id === appIdToRequest);
-
-            try {
-                const reqData = {
-                    userId: loggedInUser.id,
-                    userName: loggedInUser.name,
-                    userEmail: loggedInUser.email,
-                    appId: appIdToRequest,
-                    appName: requestedApp.name,
-                    timestamp: new Date().toISOString(),
-                    status: 'Pending'
-                };
-
-                if (isDemoMode) {
-                    const localRequests = JSON.parse(localStorage.getItem('app_requests') || '[]');
-                    localRequests.push(reqData);
-                    localStorage.setItem('app_requests', JSON.stringify(localRequests));
-                } else {
-                    const requestsRef = collection(db, 'artifacts', appId, 'public', 'data', 'app_requests');
-                    await addDoc(requestsRef, reqData);
-                }
-
-                showToast(`Request sent! You'll receive an email within 24 hours.`, "success");
-                btn.innerText = 'Requested ✓';
-                btn.className = 'w-full py-2.5 rounded-lg font-medium bg-emerald-600 text-white cursor-not-allowed';
-            } catch (error) {
-                console.error(error);
-                showToast("Failed to send request. Try again.", "error");
-                btn.innerText = originalText;
-                btn.disabled = false;
+                showToast("Request sent! You will get email in 24 hours.");
+            } catch(e) {
+                showToast("Failed to send request.");
             }
         };
 
-        window.handleAdminLogin = function(e) {
-            e.preventDefault();
-            const pwd = document.getElementById('admin-pwd').value;
-            if (pwd === 'admin123') {
-                showScreen('admin-dashboard-screen');
-                fetchAdminRequests();
-                document.getElementById('admin-pwd').value = '';
-            } else {
-                showToast("Invalid admin password", "error");
-            }
-        };
+        // ====== ADMIN LOGIC (WITH DYNAMIC PASSWORD) ======
 
-        window.fetchAdminRequests = async function() {
-            if (!currentUserId) return;
-            
-            const tbody = document.getElementById('admin-requests-tbody');
-            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading data...</td></tr>';
-            
+        window.loginAdmin = async function() {
+            const pwdInput = document.getElementById('adminPwd').value;
+            if(!pwdInput) return showToast("Enter password!");
+
             try {
-                let requests = [];
+                await signInAnonymously(auth);
                 
-                if (isDemoMode) {
-                    requests = JSON.parse(localStorage.getItem('app_requests') || '[]');
-                } else {
-                    const requestsRef = collection(db, 'artifacts', appId, 'public', 'data', 'app_requests');
-                    const qSnap = await getDocs(requestsRef);
-                    qSnap.forEach(doc => {
-                        requests.push({ id: doc.id, ...doc.data() });
-                    });
+                // Get Admin Password from Firestore
+                const docRef = doc(db, "adminSettings", "config");
+                const docSnap = await getDoc(docRef);
+                
+                let actualAdminPwd = "admin123"; // Default if not changed yet
+                if (docSnap.exists() && docSnap.data().password) {
+                    actualAdminPwd = docSnap.data().password;
                 }
 
-                // Sort in memory
-                requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                if (pwdInput === actualAdminPwd) {
+                    showScreen('adminDashboard');
+                    showToast("Welcome Admin!");
+                    loadRequests();
+                } else {
+                    showToast("Wrong Admin Password!");
+                }
+            } catch(e) {
+                showToast("Admin login error!");
+                console.log(e);
+            }
+        };
 
-                if (requests.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No requests found yet.</td></tr>';
+        window.changeAdminPassword = async function() {
+            const newPwd = document.getElementById('newAdminPwd').value;
+            if(!newPwd || newPwd.length < 4) return showToast("Enter a valid new password!");
+
+            try {
+                const docRef = doc(db, "adminSettings", "config");
+                // Update password in database
+                await setDoc(docRef, { password: newPwd }, { merge: true });
+                
+                showToast("Admin Password Changed Successfully!");
+                document.getElementById('newAdminPwd').value = ''; // clear input
+                document.getElementById('adminPwd').value = ''; // clear old login input
+            } catch(e) {
+                showToast("Failed to change password!");
+                console.log(e);
+            }
+        };
+
+        async function loadRequests() {
+            const listDiv = document.getElementById('requestList');
+            listDiv.innerHTML = "Fetching data...";
+            
+            try {
+                const querySnapshot = await getDocs(collection(db, "requests"));
+                listDiv.innerHTML = "";
+                
+                if (querySnapshot.empty) {
+                    listDiv.innerHTML = "No requests found.";
                     return;
                 }
 
-                tbody.innerHTML = '';
-                requests.forEach(req => {
-                    const date = new Date(req.timestamp).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                    
-                    const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-slate-700/30 transition-colors';
-                    tr.innerHTML = `
-                        <td class="px-6 py-4">${req.userName}</td>
-                        <td class="px-6 py-4 text-indigo-300">${req.userEmail}</td>
-                        <td class="px-6 py-4 font-medium text-emerald-400">${req.appName}</td>
-                        <td class="px-6 py-4 text-slate-400 text-xs">${date}</td>
-                        <td class="px-6 py-4">
-                            <button onclick="navigator.clipboard.writeText('${req.userEmail}'); showToast('Email copied!')" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded transition">Copy Email</button>
-                        </td>
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    listDiv.innerHTML += `
+                        <div class="request-item">
+                            <b>User:</b> ${data.userName} <br>
+                            <b>Email:</b> ${data.userEmail} <br>
+                            <b>App Requested:</b> ${data.appName}
+                        </div>
                     `;
-                    tbody.appendChild(tr);
                 });
-
-            } catch (error) {
-                console.error("Admin fetch error:", error);
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-rose-500">Error loading requests. Ensure Firebase is connected.</td></tr>';
+            } catch(e) {
+                listDiv.innerHTML = "Failed to load requests.";
             }
-        };
-
-        // Initialize view on load
-        showScreen('login-screen');
+        }
     </script>
 </body>
 </html>
